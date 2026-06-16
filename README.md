@@ -1,37 +1,38 @@
 # ContractLens
 
-ContractLens is part of ArkNet Digital's Professional Utility.
+ContractLens is an ArkNet Digital product in the Professional Utility.
 
 ## Promise
 
-spot contract risks, plain-English obligations, and negotiation moves before signing
+Spot contract risk before a signature becomes a problem.
 
-## Built For
+ContractLens gives founders, freelancers, and operators a plain-English contract review cockpit for obligations, risk, missing clauses, negotiation moves, and lawyer handoff.
 
-founders, freelancers, agencies, and operators reviewing agreements
+## Current v1
 
-## Product Modules
+- Bespoke product cockpit UI
+- Live product-specific intake
+- `POST /api/intelligence`
+- Product-specific scoring and action queue
+- Contributor mission lanes
+- Mobile-friendly layout
 
-- Risk classification
-- Obligation extraction
-- Missing clause finder
-- Negotiation script
-- Decision memo
+## Contributor Missions
 
-## Open Source Direction
-
-This repo is open to contributors because strong ideas move faster when serious builders can inspect, improve, and extend them. The goal is not secrecy. The goal is speed, quality, and contribution.
-
-## First Workflow
-
-1. Enter real context.
-2. Generate a useful first output.
-3. Review risk, confidence, or next action.
-4. Save the result into product memory in a future paid workspace.
+- PDF/DOCX upload: Extract clauses from real files.
+- Clause library: Build reusable examples of safer language.
+- Redline assistant: Suggest edits with tracked rationale.
+- Lawyer handoff export: Package risks and questions for counsel.
 
 ## Run Locally
 
 ```bash
 npm install
 npm run dev
+```
+
+## Build
+
+```bash
+npm run build
 ```
