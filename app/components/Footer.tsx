@@ -5,7 +5,7 @@ const ALL_TOOLS = [
   { name: "DayForge", desc: "AI daily time-block planner", url: "https://dayforge-psi.vercel.app", live: true },
   { name: "MeetingMind", desc: "Meeting notes → actions", url: "https://meetingmind-pied-one.vercel.app", live: true },
   { name: "DevPulse", desc: "GitHub profile analytics", url: "https://devpulse-drab-alpha.vercel.app", live: true },
-  { name: "PitchReady", desc: "Startup idea analyzer", url: "https://pitchready-two.vercel.app", live: true },
+  { name: "PitchReady", desc: "Startup idea analyzer", url: null, live: false },
   { name: "ExposureWatch", desc: "Digital exposure checker", url: "https://exposure-watch.vercel.app", live: true },
   { name: "PortGuard", desc: "IP & port scanner", url: "https://portguard-six.vercel.app", live: true },
   { name: "SafeLink", desc: "URL phishing scanner", url: "https://safelink-wheat.vercel.app", live: true },
