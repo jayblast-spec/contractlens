@@ -1,6 +1,6 @@
 # ContractLens
 
-ContractLens is part of Joy Ogunleye's Professional Utility.
+ContractLens is part of ArkNet Digital's Professional Utility.
 
 ## Promise
 
