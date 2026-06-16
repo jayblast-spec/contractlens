@@ -1,69 +1,94 @@
 export type IntelligenceInput = { input?: string };
-
 const product = {
   "repo": "ContractLens",
   "suite": "Professional Utility",
-  "category": "Contract review",
-  "audience": "founders, freelancers, agencies, and operators reviewing agreements",
-  "promise": "spot contract risks, plain-English obligations, and negotiation moves before signing",
-  "inputLabel": "Contract clause or agreement summary",
-  "placeholder": "Paste payment, termination, IP, liability, or exclusivity clauses",
-  "primary": "Scan contract",
-  "gradient": "from-yellow-200 via-amber-300 to-orange-300",
+  "domain": "Contract intelligence",
+  "accent": "from-yellow-200 via-amber-300 to-orange-300",
+  "hero": "Spot contract risk before a signature becomes a problem.",
+  "sub": "ContractLens gives founders, freelancers, and operators a plain-English contract review cockpit for obligations, risk, missing clauses, negotiation moves, and lawyer handoff.",
+  "input": "Paste payment, termination, IP, liability, exclusivity, or auto-renewal clauses",
+  "cta": "Scan contract risk",
+  "score": "Review confidence",
   "modules": [
-    "Risk classification",
-    "Obligation extraction",
-    "Missing clause finder",
-    "Negotiation script",
-    "Decision memo"
+    [
+      "Clause risk",
+      "Classify risk by payment, liability, IP, termination, and exclusivity."
+    ],
+    [
+      "Obligation extraction",
+      "Turn legal language into owner, date, and action."
+    ],
+    [
+      "Negotiation moves",
+      "Suggest safer language and questions to ask."
+    ],
+    [
+      "Lawyer handoff",
+      "Prepare a clean summary for professional review."
+    ]
   ],
-  "outputs": [
-    "Risk score",
-    "Plain-English summary",
-    "Questions for lawyer",
-    "Negotiation edits"
+  "rows": [
+    [
+      "Payment terms",
+      "Cash risk",
+      "High",
+      "Check due dates, late fees, acceptance, and dispute windows."
+    ],
+    [
+      "IP ownership",
+      "Asset risk",
+      "Critical",
+      "Clarify who owns work product and derivative rights."
+    ],
+    [
+      "Termination",
+      "Exit risk",
+      "Medium",
+      "Spot one-sided cancellation or notice traps."
+    ],
+    [
+      "Liability cap",
+      "Legal risk",
+      "High",
+      "Flag unlimited or unclear liability exposure."
+    ]
   ],
-  "next": [
-    "PDF/DOCX contract upload",
-    "clause library",
-    "redline suggestions",
-    "lawyer handoff export"
+  "missions": [
+    [
+      "PDF/DOCX upload",
+      "Extract clauses from real files."
+    ],
+    [
+      "Clause library",
+      "Build reusable examples of safer language."
+    ],
+    [
+      "Redline assistant",
+      "Suggest edits with tracked rationale."
+    ],
+    [
+      "Lawyer handoff export",
+      "Package risks and questions for counsel."
+    ]
   ]
 } as const;
-
-function score(text: string) {
-  const length = text.trim().length;
-  const diversity = new Set(text.toLowerCase().replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter(Boolean)).size;
-  return Math.min(97, 48 + Math.floor(length / 7) + Math.min(28, diversity));
-}
-
+function scoreFor(subject: string) { let score = 57 + Math.min(30, Math.floor(subject.length / 6)); if (/risk|urgent|investor|client|payment|contract|meeting|decision|launch|proof|delay/i.test(subject)) score += 7; return Math.min(98, score); }
+function band(score: number) { return score >= 86 ? 'strong' : score >= 72 ? 'ready' : score >= 60 ? 'needs review' : 'starter'; }
 export function generateIntelligence({ input = '' }: IntelligenceInput) {
-  const subject = input.trim() || product.placeholder;
-  const confidence = score(subject);
-  const urgency = confidence > 82 ? 'high' : confidence > 66 ? 'medium' : 'starter';
+  const subject = input.trim() || product.input;
+  const score = scoreFor(subject);
   return {
     product: product.repo,
-    category: product.category,
+    brand: 'ArkNet Digital',
+    suite: product.suite,
+    domain: product.domain,
     subject,
-    confidence,
-    urgency,
-    executive_summary: product.promise,
-    immediate_outputs: product.outputs.map((output, index) => ({
-      title: output,
-      detail: output + ' for: ' + subject,
-      priority: index === 0 ? 'primary' : index === 1 ? 'supporting' : 'next'
-    })),
-    automation_plan: product.modules.map((module, index) => ({
-      stage: index + 1,
-      module,
-      value: 'Automate ' + module.toLowerCase() + ' so ' + product.audience + ' can move faster with less manual work.'
-    })),
-    future_addons: product.next.map((addon, index) => ({
-      name: addon,
-      horizon: index < 2 ? 'v2' : 'v3',
-      contributor_lane: index % 2 === 0 ? 'integration' : 'product intelligence'
-    })),
-    contributor_brief: 'Improve ' + product.repo + ' by making ' + product.category.toLowerCase() + ' easier for ' + product.audience + '.',
+    score,
+    status: band(score),
+    executive_summary: product.sub,
+    intelligence_map: product.modules.map(([label, value]) => ({ label, value, status: score >= 72 ? 'priority' : 'review' })),
+    action_queue: product.rows.slice(0, 3).map(([item, owner, priority, note]) => ({ action: item + ' - ' + owner, priority, impact: note })),
+    contributor_lanes: product.missions.map(([lane, mission]) => ({ lane, mission })),
     generated_at: new Date().toISOString()
   };
 }
