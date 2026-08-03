@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { consumeScanCredit } from "@/lib/credits";
 
 export const maxDuration = 30;
 
@@ -71,10 +72,27 @@ const DEMO: ContractAnalysis = {
 };
 
 export async function POST(req: NextRequest) {
-  const { contract } = await req.json();
+  const { contract, email } = await req.json();
 
   if (!contract || typeof contract !== "string") {
     return NextResponse.json({ error: "contract text required" }, { status: 400 });
+  }
+
+  // Credit gate: only enforced once billing is actually configured (SUPABASE_SERVICE_ROLE_KEY +
+  // STRIPE_SECRET_KEY both set). Until then the tool stays fully free, matching current production
+  // behavior — this must not start blocking real users before checkout actually works.
+  const billingLive = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.STRIPE_SECRET_KEY);
+  if (billingLive) {
+    if (!email || typeof email !== "string") {
+      return NextResponse.json({ error: "email required", paywall: true }, { status: 402 });
+    }
+    const { ok, account } = await consumeScanCredit(email);
+    if (!ok) {
+      return NextResponse.json(
+        { error: "Out of free scans", paywall: true, credits_remaining: account.credits_remaining },
+        { status: 402 },
+      );
+    }
   }
 
   if (!process.env.GROQ_API_KEY) {
