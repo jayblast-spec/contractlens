@@ -7,3 +7,10 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: #080a0f; color: white; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 a { color: inherit; text-decoration: none; }
 button, textarea { font: inherit; }
+
+/* ContractLens identity: legal amber + risk crimson. */
+body { background-image: radial-gradient(circle at 13% 7%, rgba(245,158,11,.2), transparent 34%), radial-gradient(circle at 90% 20%, rgba(239,68,68,.12), transparent 30%); background-attachment: fixed; }
+main section:first-child { background: linear-gradient(180deg, rgba(48,30,8,.62), rgba(5,6,10,0)); }
+article, textarea, [class*="rounded-"] { transition: border-color .2s ease, transform .2s ease, background-color .2s ease; }
+article:hover { border-color: rgba(252,211,77,.45); transform: translateY(-2px); }
+button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px solid #fbbf24; outline-offset: 3px; }
