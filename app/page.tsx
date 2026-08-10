@@ -1,7 +1,123 @@
 'use client';
+
 import { useMemo, useState } from 'react';
-type Intel = { score:number; status:string; intelligence_map:Array<{label:string;value:string;status:string}>; action_queue:Array<{action:string;priority:string;impact:string}>; contributor_lanes:Array<{lane:string;mission:string}> };
-const product = {"repo":"ContractLens","suite":"Professional Utility","domain":"Contract intelligence","accent":"from-yellow-200 via-amber-300 to-orange-300","hero":"Spot contract risk before a signature becomes a problem.","sub":"ContractLens gives founders, freelancers, and operators a plain-English contract review cockpit for obligations, risk, missing clauses, negotiation moves, and lawyer handoff.","input":"Paste payment, termination, IP, liability, exclusivity, or auto-renewal clauses","cta":"Scan contract risk","score":"Review confidence","modules":[["Clause risk","Classify risk by payment, liability, IP, termination, and exclusivity."],["Obligation extraction","Turn legal language into owner, date, and action."],["Negotiation moves","Suggest safer language and questions to ask."],["Lawyer handoff","Prepare a clean summary for professional review."]],"rows":[["Payment terms","Cash risk","High","Check due dates, late fees, acceptance, and dispute windows."],["IP ownership","Asset risk","Critical","Clarify who owns work product and derivative rights."],["Termination","Exit risk","Medium","Spot one-sided cancellation or notice traps."],["Liability cap","Legal risk","High","Flag unlimited or unclear liability exposure."]],"missions":[["PDF/DOCX upload","Extract clauses from real files."],["Clause library","Build reusable examples of safer language."],["Redline assistant","Suggest edits with tracked rationale."],["Lawyer handoff export","Package risks and questions for counsel."]]} as const;
-function fallback(subject:string): Intel { const score = Math.min(96, 61 + (subject.length % 29)); return { score, status: score > 84 ? 'strong' : score > 72 ? 'ready' : 'needs review', intelligence_map: product.modules.map(([label,value])=>({label,value,status:'review'})), action_queue: product.rows.slice(0,3).map(([item,owner,priority,note])=>({action:item+' - '+owner,priority,impact:note})), contributor_lanes: product.missions.map(([lane,mission])=>({lane,mission})) }; }
-export default function Home(){ const [subject,setSubject]=useState<string>(product.input); const [intel,setIntel]=useState<Intel>(()=>fallback(product.input)); const [loading,setLoading]=useState(false); const tone=useMemo(()=> intel.score>=86?'text-emerald-100 border-emerald-300/40 bg-emerald-400/10':intel.score>=72?'text-cyan-100 border-cyan-300/40 bg-cyan-300/10':'text-amber-100 border-amber-300/40 bg-amber-300/10',[intel.score]); async function run(){ setLoading(true); try{ const r=await fetch('/api/intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:subject})}); setIntel(await r.json()); } finally{ setLoading(false); } }
-return <main className="min-h-screen bg-[#05060a] text-white"><section className="relative overflow-hidden border-b border-white/10"><div className={`absolute inset-0 bg-gradient-to-br ${product.accent} opacity-20 blur-3xl`} /><div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:46px_46px] opacity-25"/><nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8"><div><p className="text-[10px] font-black uppercase tracking-[0.36em] text-white/45">{product.suite}</p><h1 className="text-xl font-black tracking-tight sm:text-2xl">{product.repo}</h1></div><div className="hidden items-center gap-6 text-sm text-white/65 md:flex"><a href="#studio">Studio</a><a href="#queue">Queue</a><a href="#contributors">Contributors</a><a href="#live" className="rounded-full bg-white px-4 py-2 font-black text-black">Run</a></div></nav><div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[1fr_1fr] lg:pb-24 lg:pt-16"><div><p className="w-fit rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.24em] text-white/70">{product.domain}</p><h2 className="mt-7 max-w-4xl text-5xl font-black leading-[0.92] tracking-[-0.055em] sm:text-7xl lg:text-8xl">{product.hero}</h2><p className="mt-7 max-w-2xl text-lg leading-8 text-white/68">{product.sub}</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><a href="#live" className="rounded-full bg-white px-6 py-4 text-center text-sm font-black text-black">{product.cta}</a><a href="#contributors" className="rounded-full border border-white/15 px-6 py-4 text-center text-sm font-bold text-white/80">Contributor missions</a></div></div><div id="live" className="rounded-[2rem] border border-white/10 bg-black/35 p-4 shadow-2xl shadow-black/50 backdrop-blur-xl sm:p-5"><div className="rounded-[1.5rem] border border-white/10 bg-[#080d16]/90 p-5"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/40">AI command studio</p><h3 className="mt-2 text-2xl font-black">{product.cta}</h3></div><div className={`rounded-2xl border px-4 py-3 text-right ${tone}`}><p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">{product.score}</p><p className="text-3xl font-black">{intel.score}</p></div></div><textarea value={subject} onChange={(e)=>setSubject(e.target.value)} className="mt-6 min-h-32 w-full resize-none rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-sm leading-6 text-white outline-none focus:border-white/35"/><button onClick={run} className="mt-4 w-full rounded-full bg-white px-5 py-4 text-sm font-black text-black">{loading?'Thinking...':product.cta}</button><div className="mt-5 grid gap-3 sm:grid-cols-2">{intel.intelligence_map.map(item=><div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"><p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/38">{item.status}</p><h4 className="mt-3 font-black">{item.label}</h4><p className="mt-2 text-sm leading-6 text-white/55">{item.value}</p></div>)}</div></div></div></div></section><section id="studio" className="mx-auto grid max-w-7xl gap-8 px-5 py-16 sm:px-8 lg:grid-cols-[0.72fr_1.28fr]"><div><p className="text-[10px] font-black uppercase tracking-[0.32em] text-white/40">Product studio</p><h2 className="mt-4 text-4xl font-black tracking-[-0.035em] sm:text-5xl">A real workflow surface, not a thin AI wrapper.</h2><p className="mt-5 text-base leading-7 text-white/58">Each module exists so users can move from input to useful output, then into memory, action, export, or collaboration.</p></div><div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.045]">{product.rows.map(([item,owner,priority,note])=><div key={item} className="grid gap-3 border-b border-white/10 p-5 last:border-b-0 md:grid-cols-[1fr_0.7fr_0.5fr_1.3fr]"><p className="font-black">{item}</p><p className="text-sm text-white/58">{owner}</p><p className={String(priority)==='Critical'?'text-sm font-black text-red-200':'text-sm font-black text-cyan-100'}>{priority}</p><p className="text-sm leading-6 text-white/58">{note}</p></div>)}</div></section><section id="queue" className="border-y border-white/10 bg-white/[0.035]"><div className="mx-auto grid max-w-7xl gap-6 px-5 py-16 sm:px-8 lg:grid-cols-3">{intel.action_queue.map(item=><article key={item.action} className="rounded-[1.75rem] border border-white/10 bg-black/35 p-6"><p className="text-[10px] font-black uppercase tracking-[0.26em] text-white/40">{item.priority}</p><h3 className="mt-4 text-2xl font-black tracking-tight">{item.action}</h3><p className="mt-4 text-sm leading-7 text-white/58">{item.impact}</p></article>)}</div></section><section id="contributors" className="mx-auto max-w-7xl px-5 py-16 sm:px-8"><div className="mb-8 max-w-3xl"><p className="text-[10px] font-black uppercase tracking-[0.32em] text-white/40">Contributor missions</p><h2 className="mt-4 text-4xl font-black tracking-[-0.035em] sm:text-5xl">Open-source should feel like joining a serious lab.</h2><p className="mt-5 text-base leading-7 text-white/58">Concrete lanes for builders who want to help ArkNet Digital create useful AI-era tools.</p></div><div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{intel.contributor_lanes.map(item=><article key={item.lane} className="rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-5"><h3 className="text-xl font-black">{item.lane}</h3><p className="mt-3 text-sm leading-7 text-white/58">{item.mission}</p></article>)}</div></section></main> }
+
+type Intel = {
+  score: number;
+  status: string;
+  intelligence_map: Array<{ label: string; value: string; status: string }>;
+  action_queue: Array<{ action: string; priority: string; impact: string }>;
+  contributor_lanes: Array<{ lane: string; mission: string }>;
+};
+
+const example = 'Payment is due within 60 days. All work product and derivative rights transfer to the client. Either party may terminate with 7 days notice. Contractor liability is unlimited.';
+const modules = [
+  ['Payment terms', 'Cash-flow exposure', 'High'],
+  ['IP ownership', 'Asset ownership', 'Critical'],
+  ['Termination', 'Exit conditions', 'Medium'],
+  ['Liability cap', 'Downside exposure', 'High'],
+] as const;
+
+function fallback(subject: string): Intel {
+  const score = Math.min(96, 61 + (subject.length % 29));
+  return {
+    score,
+    status: score > 84 ? 'strong' : score > 72 ? 'ready' : 'needs review',
+    intelligence_map: modules.map(([label, value, status]) => ({ label, value, status })),
+    action_queue: [
+      { action: 'Shorten the payment window', priority: 'High', impact: 'Ask for Net 15 or Net 30 with a defined acceptance window.' },
+      { action: 'Narrow the IP transfer', priority: 'Critical', impact: 'Carve out pre-existing tools, methods, and reusable know-how.' },
+      { action: 'Add a liability ceiling', priority: 'High', impact: 'Tie aggregate liability to fees paid under the agreement.' },
+    ],
+    contributor_lanes: [],
+  };
+}
+
+export default function Home() {
+  const [subject, setSubject] = useState(example);
+  const [intel, setIntel] = useState<Intel>(() => fallback(example));
+  const [loading, setLoading] = useState(false);
+  const tone = useMemo(() => (intel.score >= 86 ? 'good' : intel.score >= 72 ? 'warn' : 'risk'), [intel.score]);
+
+  async function run() {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/intelligence', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: subject }),
+      });
+      setIntel(await response.json());
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <main>
+      <header className="site-header">
+        <a className="brand" href="#top" aria-label="ContractLens home">
+          <span className="brand-mark">CL</span>
+          <span>ContractLens<small>Contract intelligence</small></span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="#review">Review</a><a href="#findings">Findings</a><a href="#workflow">How it works</a>
+        </nav>
+        <a className="header-cta" href="#review">Review a contract</a>
+      </header>
+
+      <section className="hero" id="top">
+        <div className="hero-copy">
+          <p className="eyebrow"><span /> CONTRACT REVIEW · PLAIN ENGLISH</p>
+          <h1>Know what you’re agreeing to <em>before you sign.</em></h1>
+          <p className="lede">ContractLens turns dense clauses into a prioritized review of obligations, exposure, missing protections, and negotiation moves.</p>
+          <div className="hero-actions"><a className="button primary" href="#review">Scan contract risk <span>→</span></a><a className="button secondary" href="#findings">See example findings</a></div>
+          <div className="trust-row"><span>✓ Clause-level findings</span><span>✓ Actionable negotiation notes</span><span>✓ Counsel-ready summary</span></div>
+        </div>
+
+        <div className="review-shell" id="review">
+          <div className="window-bar"><span className="window-dots"><i/><i/><i/></span><span>NEW REVIEW</span><span className="secure">● LOCAL SESSION</span></div>
+          <div className="review-head"><div><span className="mono">DOCUMENT / EXCERPT</span><h2>Paste a clause to review</h2></div><div className={`score ${tone}`}><small>REVIEW SCORE</small><strong>{intel.score}</strong><span>/100</span></div></div>
+          <label className="sr-only" htmlFor="contract-input">Contract text</label>
+          <textarea id="contract-input" value={subject} onChange={(event) => setSubject(event.target.value)} />
+          <div className="input-footer"><span>{subject.length} characters · Text excerpt</span><button onClick={run} disabled={loading}>{loading ? 'Reviewing clauses…' : 'Run risk review'} <b>→</b></button></div>
+          <div className="signal-grid" aria-label="Example review summary">
+            <div><small>CRITICAL</small><strong>01</strong><span>IP ownership</span></div>
+            <div><small>HIGH RISK</small><strong>02</strong><span>Payment · Liability</span></div>
+            <div><small>REVIEW</small><strong>01</strong><span>Termination</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="findings" id="findings">
+        <div className="section-heading"><p className="eyebrow"><span /> 01 / FINDINGS</p><h2>A decision surface, not a wall of legal text.</h2><p>See the clause, why it matters, and the next move in one scan.</p></div>
+        <div className="findings-board">
+          <div className="clause-list" role="list">
+            {intel.intelligence_map.map((item, index) => <article key={item.label} className={index === 1 ? 'active' : ''}>
+              <span className={`severity severity-${String(item.status).toLowerCase()}`}>{item.status}</span><div><h3>{item.label}</h3><p>{item.value}</p></div><b>0{index + 1}</b>
+            </article>)}
+          </div>
+          <div className="finding-detail">
+            <div className="detail-top"><span className="severity severity-critical">Critical</span><span className="mono">CLAUSE 7.2 · INTELLECTUAL PROPERTY</span></div>
+            <blockquote>“All work product and derivative rights transfer to the client.”</blockquote>
+            <div className="analysis-block"><small>WHY THIS MATTERS</small><p>The language may transfer more than the deliverables—including reusable methods, templates, and tools created before this engagement.</p></div>
+            <div className="recommendation"><span>NEGOTIATION MOVE</span><p>Carve out pre-existing materials and grant the client a license only to what is required to use the final deliverable.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="actions" aria-labelledby="action-title">
+        <div className="section-heading compact"><p className="eyebrow"><span /> 02 / ACTION QUEUE</p><h2 id="action-title">Turn findings into a negotiation plan.</h2></div>
+        <div className="action-grid">{intel.action_queue.map((item, index) => <article key={item.action}><div><span>0{index + 1}</span><span className={`priority priority-${item.priority.toLowerCase()}`}>{item.priority}</span></div><h3>{item.action}</h3><p>{item.impact}</p></article>)}</div>
+      </section>
+
+      <section className="workflow" id="workflow">
+        <div className="section-heading compact"><p className="eyebrow"><span /> 03 / WORKFLOW</p><h2>From contract text to counsel-ready questions.</h2></div>
+        <ol><li><b>01</b><div><h3>Paste an excerpt</h3><p>Start with the clauses you need to understand.</p></div></li><li><b>02</b><div><h3>Review exposure</h3><p>See risks grouped by commercial impact.</p></div></li><li><b>03</b><div><h3>Prepare your response</h3><p>Take clear questions and negotiation points to counsel.</p></div></li></ol>
+        <p className="disclaimer">ContractLens provides contract intelligence, not legal advice. Have a qualified lawyer review material agreements.</p>
+      </section>
+
+      <footer><div className="brand"><span className="brand-mark">CL</span><span>ContractLens<small>Read clearly. Decide confidently.</small></span></div><a href="#review">Start a new review ↑</a></footer>
+    </main>
+  );
+}
