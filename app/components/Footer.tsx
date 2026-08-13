@@ -6,11 +6,12 @@ const ALL_TOOLS = [
   { name: "MeetingMind", desc: "Meeting notes → actions", url: "https://meetingmind-pied-one.vercel.app", live: true },
   { name: "DevPulse", desc: "GitHub profile analytics", url: "https://devpulse-drab-alpha.vercel.app", live: true },
   { name: "PitchReady", desc: "Startup idea analyzer", url: null, live: false },
-  { name: "ExposureWatch", desc: "Digital exposure checker", url: "https://exposure-watch.vercel.app", live: true },
+  { name: "ExposureWatch", desc: "Digital exposure checker", url: null, live: false },
   { name: "PortGuard", desc: "IP & port scanner", url: "https://portguard-six.vercel.app", live: true },
   { name: "SafeLink", desc: "URL phishing scanner", url: "https://safelink-wheat.vercel.app", live: true },
   { name: "SubnetPilot", desc: "CIDR subnet calculator", url: "https://subnetpilot.vercel.app", live: true },
   { name: "ThreatPulse", desc: "CVE threat feed", url: "https://threatpulse-six.vercel.app", live: true },
+  { name: "ContractLens", desc: "Contract risk scanner", url: "https://contractlens-rho.vercel.app", live: true },
 ];
 
 const CURRENT = "ContractLens";
