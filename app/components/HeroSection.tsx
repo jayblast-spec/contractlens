@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function HeroSection({ onScanClick }: { onScanClick: () => void }) {
   return (
-    <section className="forest-bg leaf-grid relative flex min-h-screen flex-col items-center justify-center px-4 text-center">
+    <section className="relative flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
       <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-accent/6 blur-[130px]" />
 
       <motion.div
