@@ -32,7 +32,17 @@ ContractLens takes pasted contract text (payment, termination, IP, liability, ex
 
 ## How It Works
 
-Built on Next.js (App Router, latest) with React 19 and TypeScript, styled with Tailwind CSS v4. The client (`app/page.tsx`) posts contract text to `/api/intelligence`, which returns a score, status, and structured risk/action data (with a deterministic client-side fallback when the API is unavailable). Additional routes under `app/api/` handle `scan` (contract scanning), `checkout` and `stripe` (subscription billing via Stripe), and `intelligence` (the core analysis endpoint). Supabase (`@supabase/supabase-js`) provides auth and persistence; Framer Motion drives interface animation.
+Built on Next.js (App Router, latest) with React 19 and TypeScript, styled with Tailwind CSS v4. The client (`app/components/ContractForm.tsx`) posts contract text to `/api/scan`, which calls Groq against a strict typed schema (`ContractAnalysis`: risk flags, missing terms, score) and falls back to a fixed demo analysis when no API key is set. `checkout` and `stripe/webhook` handle subscription billing via Stripe; Supabase (`@supabase/supabase-js`) provides auth and persistence; Framer Motion drives interface animation.
+
+## Engineering Notes
+
+**The real problem:** contract risk isn't binary — a missing liability cap and a missing typo-fix are both "issues," but only one should stop you from signing, so a flat list of flags is worse than useless if it doesn't rank them.
+
+**The approach:** `/api/scan` prompts Groq against a typed schema that forces the model to separate `RiskFlag`s from `MissingTerm`s and assign each its own severity, rather than returning one undifferentiated wall of concerns.
+
+**One real number:** the demo fallback (no `GROQ_API_KEY`) ships a fully worked contract analysis with real risk flags and missing-term entries, not a placeholder — the product is honestly demoable without a key.
+
+**Not handled yet:** `app/api/intelligence` is a separate, disconnected decorative endpoint — it is not what the form actually calls, despite being described that way in earlier documentation for this repo.
 
 ## Live
 
