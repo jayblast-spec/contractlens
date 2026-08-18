@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { consumeScanCredit } from "@/lib/credits";
+import { completeWithFallback } from "@/lib/ai-fallback";
 
 export const maxDuration = 30;
 
@@ -95,11 +96,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (!process.env.GROQ_API_KEY) {
-    await new Promise((r) => setTimeout(r, 1700));
-    return NextResponse.json({ demo: true, analysis: DEMO });
-  }
-
   const systemPrompt = `You are a senior contract attorney with 20 years of experience reviewing commercial and freelance agreements.
 Analyze the provided contract text for risks, red flags, and missing terms.
 
@@ -132,33 +128,17 @@ Return ONLY valid JSON matching exactly this shape:
 
   const text = contract.slice(0, 8000);
 
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `Contract text:\n\n${text}` },
-      ],
-      temperature: 0.2,
-      max_tokens: 2500,
-    }),
-  });
-
-  if (!response.ok) return NextResponse.json({ error: "AI unavailable" }, { status: 500 });
-
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content ?? "";
-
   try {
+    const { content } = await completeWithFallback(systemPrompt, `Contract text:\n\n${text}`, {
+      temperature: 0.2,
+      maxTokens: 2500,
+    });
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     const analysis: ContractAnalysis = JSON.parse(jsonMatch ? jsonMatch[0] : content);
     return NextResponse.json({ demo: false, analysis });
-  } catch {
-    return NextResponse.json({ error: "Parse failed" }, { status: 500 });
+  } catch (err) {
+    console.error("completeWithFallback failed:", err instanceof Error ? err.message : err);
+    await new Promise((r) => setTimeout(r, 1500));
+    return NextResponse.json({ demo: true, analysis: DEMO });
   }
 }
