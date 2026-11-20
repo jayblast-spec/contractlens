@@ -7,7 +7,6 @@
 ContractLens gives founders, freelancers, and operators a plain-English contract review cockpit — clause risk scanning, obligation extraction, negotiation-move suggestions, and lawyer-handoff summaries — so a signature never becomes a surprise.
 
 <p>
-  <a href="https://contractlens-rho.vercel.app"><img alt="Live Demo" src="https://img.shields.io/badge/Live-Demo-1D4ED8?style=for-the-badge&logo=vercel&logoColor=white"></a>
   <a href="https://github.com/jayblast-spec/contractlens"><img alt="GitHub Repo" src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white"></a>
 </p>
 
@@ -46,7 +45,7 @@ Built on Next.js (App Router, latest) with React 19 and TypeScript, styled with 
 
 ## Live
 
-https://contractlens-rho.vercel.app
+*(demo temporarily offline)*
 
 ## Tech Stack
 
